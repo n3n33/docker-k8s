@@ -151,6 +151,11 @@ kubectl apply -f calico.yaml
 kubectl get pods --namespace kube-system
 ```
 
+## k8s log 확인
+```
+kubectl logs -n kube-system calico-node-67rs7
+```
+
 ## k8s reset
 ```
 # 각 노드별로 해야됨

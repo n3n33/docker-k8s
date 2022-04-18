@@ -135,6 +135,20 @@ kubeadm join masterIP:6443 --token 3g0m9o.vso9b2fmwytlzi88 \
         --ignore-preflight-errors=NumCPU
 ```
 
+## 네트워크 플러그인
+```
+wget https://docs.projectcalico.org/manifests/calico.yaml
+sed -i -e 's?192.168.0.0/16?192.168.10.0/24?g' calico.yaml
+kubectl apply -f calico.yaml
+kubectl get pods --namespace kube-system
+```
+## k8s worker join
+```
+kubeadm join masterIP:6443 --token 3g0m9o.vso9b2fmwytlzi88 \
+        --discovery-token-ca-cert-hash sha256:d4ffcc6202efc6c738f80d41fa1734a1d12b813b693d4f151a98b2147bf71ac2 --v=5 \
+        --ignore-preflight-errors=NumCPU
+```
+
 ```
 # kubectl get nodes
 NAME        STATUS     ROLES                  AGE    VERSION
@@ -143,13 +157,6 @@ test2.com   NotReady   <none>                 60s    v1.23.5
 test3.com   NotReady   <none>                 57s    v1.23.5
 ```
 
-## 네트워크 실행
-```
-wget https://docs.projectcalico.org/manifests/calico.yaml
-sed -i -e 's?192.168.0.0/16?192.168.10.0/24?g' calico.yaml
-kubectl apply -f calico.yaml
-kubectl get pods --namespace kube-system
-```
 
 ## k8s log 확인
 ```
@@ -163,3 +170,42 @@ kubeadm reset
 systemctl restart docker
 systemctl restart kubelet
 ```
+
+## dashboard
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml
+kubectl -n kubernetes-dashboard edit service kubernetes-dashboard
+## type: ClusterIP -> type: NodePort 변경
+kubectl -n kubernetes-dashboard get service kubernetes-dashboard 
+
+## serviceaccount 생성
+
+cat <<EOF | kubectl create -f -
+ apiVersion: v1
+ kind: ServiceAccount
+ metadata:
+   name: admin-user
+   namespace: kube-system
+EOF
+
+## ClusterRoleBinding 생성
+
+cat <<EOF | kubectl create -f -
+ apiVersion: rbac.authorization.k8s.io/v1
+ kind: ClusterRoleBinding
+ metadata:
+   name: admin-user
+ roleRef:
+   apiGroup: rbac.authorization.k8s.io
+   kind: ClusterRole
+   name: cluster-admin
+ subjects:
+ - kind: ServiceAccount
+   name: admin-user
+   namespace: kube-system
+EOF
+
+## token 복사
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}') 
+```
+![k8s-cap](https://user-images.githubusercontent.com/51447153/163783411-f8ed1503-65dd-463e-85b3-32c8f14a59d6.png)

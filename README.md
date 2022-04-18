@@ -107,7 +107,7 @@ sudo systemctl restart kubelet
 
 CPU 2개 이하일때
 ```
-kubeadm init --apiserver-advertise-address=192.168.56.103 --v=5 --ignore-preflight-errors=NumCPU
+kubeadm init --pod-network-cidr=20.96.0.0/12 --apiserver-advertise-address=192.168.56.103 --v=5 --ignore-preflight-errors=NumCPU
 ```
 
 실행 성공 후 로그

@@ -142,3 +142,11 @@ test1.com   NotReady   control-plane,master   111m   v1.23.5
 test2.com   NotReady   <none>                 60s    v1.23.5
 test3.com   NotReady   <none>                 57s    v1.23.5
 ```
+
+네트워크 실행
+```
+wget https://docs.projectcalico.org/manifests/calico.yaml
+sed -i -e 's?192.168.0.0/16?192.168.10.0/24?g' calico.yaml
+kubectl apply -f calico.yaml
+kubectl get pods --namespace kube-system
+```

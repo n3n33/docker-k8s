@@ -5,71 +5,6 @@
 
 ### docker engine 설치
 ```
-vi /etc/yum.repos.d/docker-ce.repo
-[docker-ce-stable]
-name=Docker CE Stable - $basearch
-baseurl=https://download.docker.com/linux/centos/$releasever/$basearch/stable
-enabled=1
-gpgcheck=1
-gpgkey=https://download.docker.com/linux/centos/gpg
-
-[docker-ce-stable-debuginfo]
-name=Docker CE Stable - Debuginfo $basearch
-baseurl=https://download.docker.com/linux/centos/$releasever/debug-$basearch/stable
-enabled=0
-gpgcheck=1
-gpgkey=https://download.docker.com/linux/centos/gpg
-
-[docker-ce-stable-source]
-name=Docker CE Stable - Sources
-baseurl=https://download.docker.com/linux/centos/$releasever/source/stable
-enabled=0
-gpgcheck=1
-gpgkey=https://download.docker.com/linux/centos/gpg
-
-[docker-ce-test]
-name=Docker CE Test - $basearch
-baseurl=https://download.docker.com/linux/centos/$releasever/$basearch/test
-enabled=0
-gpgcheck=1
-gpgkey=https://download.docker.com/linux/centos/gpg
-
-[docker-ce-test-debuginfo]
-name=Docker CE Test - Debuginfo $basearch
-baseurl=https://download.docker.com/linux/centos/$releasever/debug-$basearch/test
-enabled=0
-gpgcheck=1
-gpgkey=https://download.docker.com/linux/centos/gpg
-
-[docker-ce-test-source]
-name=Docker CE Test - Sources
-baseurl=https://download.docker.com/linux/centos/$releasever/source/test
-enabled=0
-gpgcheck=1
-gpgkey=https://download.docker.com/linux/centos/gpg
-
-[docker-ce-nightly]
-name=Docker CE Nightly - $basearch
-baseurl=https://download.docker.com/linux/centos/$releasever/$basearch/nightly
-enabled=0
-gpgcheck=1
-gpgkey=https://download.docker.com/linux/centos/gpg
-
-[docker-ce-nightly-debuginfo]
-name=Docker CE Nightly - Debuginfo $basearch
-baseurl=https://download.docker.com/linux/centos/$releasever/debug-$basearch/nightly
-enabled=0
-gpgcheck=1
-gpgkey=https://download.docker.com/linux/centos/gpg
-
-[docker-ce-nightly-source]
-name=Docker CE Nightly - Sources
-baseurl=https://download.docker.com/linux/centos/$releasever/source/nightly
-enabled=0
-gpgcheck=1
-gpgkey=https://download.docker.com/linux/centos/gpg
-```
-```
  sudo yum install -y yum-utils
  sudo yum-config-manager \
     --add-repo \
@@ -85,6 +20,21 @@ systemctl start docker
 ```
 
 ### kubectl, kubelet, kubeadm  설치
+```
+vi /etc/yum.reposd/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kubelet kubeadm kubectl
+
+yum clean all
+yum repolist
+yum install kubelet kubeadm kubectl -y
+```
 
 ```
 sudo mkdir /etc/docker

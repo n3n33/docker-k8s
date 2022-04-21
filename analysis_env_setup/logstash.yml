@@ -1,0 +1,56 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-configmap
+  labels:
+    task: logging
+    k8s-app: logstash
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  logging-logstash
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      task: logging
+      k8s-app: logstash
+  template:
+    metadata:
+      labels:
+        task: logging
+        k8s-app: logstash
+    spec:
+      containers:
+      - name: logstash
+        image: docker.elastic.co/logstash/logstash:6.8.0
+        ports:
+          - containerPort: 5044
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /data/docker-k8s/analysis_env_setup
+          name: config-volume
+      volumes:
+      - name:  config-volume
+        configMap:
+          name: logstash-configmap
+          items:
+          - key: logstash.yml
+            path: logstash.yml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    task: logging
+    kubernetes.io/name: logstash 
+  name: logging-logstash
+spec:
+  ports:
+  - name:  lumberjack
+    port:  5000
+    targetPort: 5000
+  selector:
+    k8s-app: logstash

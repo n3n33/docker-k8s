@@ -1,4 +1,7 @@
 ## 분석 환경 구성도
-1. logstash 배포 
-2. elasticsearch 배포
-3. kibana 배포
+
+elasticsearch rolling up
+```
+kubectl set image deployments/elasticsearch elasticsearch=elastic/elasticsearch:7.17.1
+kubectl describe pods
+```
